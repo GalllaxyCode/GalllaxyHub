@@ -1,176 +1,109 @@
-local Decimals = 4
-local Clock = os.clock()
-local ValueText = "Value Is Now :"
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/drillygzzly/Roblox-UI-Libs/main/1%20Tokyo%20Lib%20(FIXED)/Tokyo%20Lib%20Source.lua"))({
-    cheatname = "GalllaxyHub",
-    gamename = "Ghoul://Re", 
+local Window = Rayfield:CreateWindow({
+	Name = "GalllaxyHub",
+	Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+	LoadingTitle = "GalllaxyHub loads///",
+	LoadingSubtitle = "by Galllaxy",
+	Theme = "Amethyst", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+ 
+	DisableRayfieldPrompts = false,
+	DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+ 
+	ConfigurationSaving = {
+	   Enabled = true,
+	   FolderName = nil, -- Create a custom folder for your hub/game
+	   FileName = "Big Hub"
+	},
+ 
+	Discord = {
+	   Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
+	   Invite = "https://discord.gg/vSf9hSJG", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+	   RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+	},
 })
 
-library:init()
-
-local Window1  = library.NewWindow({
-    title = "GalllaxyHub BETA | v0.1", -- Mainwindow Text
-    size = UDim2.new(0, 510, 0.6, 6
-)})
-
-local Tab1 = Window1:AddTab("Player")
-local SettingsTab = library:CreateSettingsTab(Window1)
-
---Tab1:SetText("Text")
-
-local Section1 = Tab1:AddSection("Section 1", 1)
---Section1:SetText("Text")
-
-Section1:AddToggle({
-    text = "Bypass TP",
-    state = false,
-    risky = true,
-    tooltip = "lets you tp",
-    flag = "BypassTP",
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
-    end
-}):AddBind({
-    enabled = true,
-    text = "Keybind1",
-    tooltip = "tooltip1",
-    mode = "toggle",
-    bind = "None",
-    flag = "ToggleKey_1",
-    state = false,
-    nomouse = false,
-    risky = false,
-    noindicator = false,
-    callback = function(v)
-        print(ValueText, v)
-    end,
-    keycallback = function(v)
-        print(ValueText, v)
+local Tab = Window:CreateTab("Player", "sigma") -- Title, Image
+local Section = Tab:CreateSection("Section Example")
+Section:Set("Section Example")
+local Divider = Tab:CreateDivider()
+Divider:Set(true) -- Whether the divider's visibility is to be set to true or false.
+local Button = Tab:CreateButton({
+	Name = "Unload Script",
+	Callback = function()
+	-- The function that takes place when the button is pressed
+		Rayfield:Destroy()
+	end,
+ })
+ local Toggle = Tab:CreateToggle({
+	Name = "Toggle Swag?",
+	CurrentValue = false,
+	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+	-- The function that takes place when the toggle is pressed
+	-- The variable (Value) is a boolean on whether the toggle is true or false
+	end,
+ })
+ local ColorPicker = Tab:CreateColorPicker({
+    Name = "Color Picker | Pick your gender",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "ColorPicker1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        -- The function that takes place every time the color picker is moved/changed
+        -- The variable (Value) is a Color3fromRGB value based on which color is selected
     end
 })
+local Slider = Tab:CreateSlider({
+	Name = "Slider your ego",
+	Range = {0, 100},
+	Increment = 1,
+	Suffix = "Huesos",
+	CurrentValue = 10,
+	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+	-- The function that takes place when the slider changes
+	-- The variable (Value) is a number which correlates to the value the slider is currently at
+	end,
+ })
+ local Input = Tab:CreateInput({
+	Name = "Your name?",
+	CurrentValue = "",
+	PlaceholderText = "KYS NIGGA",
+	RemoveTextAfterFocusLost = false,
+	Flag = "Input1",
+	Callback = function(Text)
+	-- The function that takes place when the input is changed
+	-- The variable (Text) is a string for the value in the text box
+	end,
+ })
+ local Dropdown = Tab:CreateDropdown({
+	Name = "Dropdown Example",
+	Options = {"Option 1","Option 2"},
+	CurrentOption = {"Option 1"},
+	MultipleOptions = false,
+	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Options)
+	-- The function that takes place when the selected option is changed
+	-- The variable (Options) is a table of strings for the current selected options
+	end,
+ })
+local KeybindTab = Window:CreateTab("Keybinds", "command")
+local Keybind1 = Tab:CreateKeybind({
+	Name = "Walkspeed",
+	CurrentKeybind = "Q",
+	HoldToInteract = false,
+	Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Keybind)
+	-- The function that takes place when the keybind is pressed
+	-- The variable (Keybind) is a boolean for whether the keybind is being held or not (HoldToInteract needs to be true)
+	end,
+ })
 
-Section1:AddBox({
-    enabled = true,
-    name = "TextBox1",
-    flag = "TextBox_1",
-    input = "PlaceHolder1",
-    focused = false,
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
-    end
-})
+Rayfield:Notify({
+	Title = "GalllaxyHub Loaded!",
+	Content = "The script loaded successfully!",
+	Duration = 6.5,
+	Image = "rewind",
+ })
 
---[[Section1:AddToggle({
-    text = "Toggle1",
-    flag = "Toggle_1",
-    callback = function(v)
-        print(ValueText, v)
-    end
-}):AddColor({
-    text = "Color1",
-    color = Color3.fromRGB(255, 255, 255),
-    flag = "Color_1",
-    callback = function(v)
-        print(ValueText, v)
-    end
-})--]]
-
---[[Section1:AddBind({
-    enabled = true,
-    text = "Keybind1",
-    tooltip = "tooltip1",
-    mode = "toggle",
-    bind = "None",
-    flag = "ToggleKey_1",
-    state = false,
-    nomouse = false,
-    risky = false,
-    noindicator = false,
-    callback = function(v)
-        print(ValueText, v)
-    end,
-    keycallback = function(v)
-        print(ValueText, v)
-    end
-})--]]
-
-Section1:AddSeparator({
-    enabled = true,
-    text = "Separator1"
-})
-
-Section1:AddButton({
-    enabled = true,
-    text = "Button1",
-    tooltip = "tooltip1",
-    confirm = true,
-    risky = false,
-    callback = function()
-        print("Pressed!")
-    end
-})
-
--- Button1:SetText("Text")
-
-Section1:AddSlider({
-    enabled = true,
-    text = "Slider1",
-    tooltip = "tooltip1",
-    flag = "Slider_1",
-    suffix = "",
-    dragging = true,
-    focused = false,
-    min = 0,
-    max = 100,
-    increment = 0.1,
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
-    end
-})
-
---Slider_1:SetValue(100)
-
-Section1:AddList({
-    enabled = true,
-    text = "Selection", 
-    tooltip = "tooltip1",
-    selected = "",
-    multi = false,
-    open = false,
-    max = 4,
-    values = {"1", "2", "3"},
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
-    end
-})
-
-Section1:AddColor({
-    enabled = true,
-    text = "Color1",
-    tooltip = "tooltip1",
-    color = Color3.fromRGB(255, 255, 255),
-    flag = "Color_1",
-    trans = 0,
-    open = false,
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
-    end
-})
-
-local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
-library:SendNotification(("Loaded In "..tostring(Time)), 6)
-
---[[
-    --Window1:SetOpen(false)
-    makefolder("Title Here")
-    library:SetTheme(Default)
-    library:GetConfig(Default)
-    library:LoadConfig(Default)
-    library:SaveConfig(Default)
-]]
+ Rayfield:LoadConfiguration()
