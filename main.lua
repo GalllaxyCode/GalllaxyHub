@@ -10,15 +10,15 @@ local Window = Rayfield:CreateWindow({
 	Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
 	LoadingTitle = "GalllaxyHub loads...",
 	LoadingSubtitle = "by Galllaxy",
-	Theme = "Amethyst", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+	Theme = "Serenity", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
 	DisableRayfieldPrompts = false,
 	DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
 
 	ConfigurationSaving = {
 	Enabled = true,
-	FolderName = nil, -- Create a custom folder for your hub/game
-	FileName = "Big Hub"
+	FolderName = "Ghoul://Re", -- Create a custom folder for your hub/game
+	FileName = "Ghoul://Re"
 	},
 
 	Discord = {
@@ -28,31 +28,54 @@ local Window = Rayfield:CreateWindow({
 	},
 })
 
-local Tab = Window:CreateTab("Player", "sigma") -- Title, Image
-local Section = Tab:CreateSection("Section Example")
+local PlayerTab = Window:CreateTab("Player", "sigma") -- Title, Image
+local Section = PlayerTab:CreateSection("Section Example")
 Section:Set("Valuable Settings")
-local Toggle = Tab:CreateToggle({
+local ToggleWalkspeed = PlayerTab:CreateToggle({
 	Name = "Toggle Walkspeed",
 	CurrentValue = false,
-	Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "WalkSpeed", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 	-- The function that takes place when the toggle is pressed
 	-- The variable (Value) is a boolean on whether the toggle is true or false
 	end,
 })
-local Slider = Tab:CreateSlider({
+local Slider = PlayerTab:CreateSlider({
 	Name = "Walkspeed",
-	Range = {0, 100},
+	Range = {0, 500},
 	Increment = 1,
-	Suffix = "Huesos",
-	CurrentValue = 10,
+	Suffix = "Walkspeed",
+	CurrentValue = 16,
 	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
+		ChangeWalkspeed(Value)
 	-- The function that takes place when the slider changes
 	-- The variable (Value) is a number which correlates to the value the slider is currently at
 	end,
 })
-local Button = Tab:CreateButton({
+local ToggleJumppower = PlayerTab:CreateToggle({
+	Name = "Toggle JumpPower",
+	CurrentValue = false,
+	Flag = "JumpPower", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+
+	-- The function that takes place when the toggle is pressed
+	-- The variable (Value) is a boolean on whether the toggle is true or false
+	end,
+})
+local Slider = PlayerTab:CreateSlider({
+	Name = "JumpPower",
+	Range = {0, 500},
+	Increment = 1,
+	Suffix = "JumpPowerslider"
+	CurrentValue = 15,
+	Flag = "JumpPowerSlider",
+	Callback = function(Value)
+		ChangeJumppower(Value)
+		-- Something
+	end
+})
+local Button = PlayerTab:CreateButton({
 	Name = "Unload Script",
 	Callback = function()
 	-- The function that takes place when the button is pressed
@@ -79,3 +102,26 @@ Rayfield:Notify({
 })
 
 Rayfield:LoadConfiguration()
+
+local function ChangeWalkspeed(Value)
+	--[[local player = game.Players.LocalPlayer
+	local char = player.Character
+	local humanoid = char.WaitForChild("Humanoid")
+	humanoid.Walkspeed = Value]]--
+	if ToggleWalkspeed.CurrentValue == True then
+		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = Value
+	else
+		game.Player.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = 16
+	end
+end
+
+local function ChangeJumppower(Value)
+	--[[local player = game.Players.LocalPlayer
+	local char = player.Character
+	local humanoid = char.WaitForChild("Humanoid")
+	humanoid.JumpPower = Value]]--
+	if ToggleJumppower.CurrentValue == True then
+		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = Value
+	else
+		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = 50
+end
