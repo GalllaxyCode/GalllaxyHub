@@ -1,7 +1,7 @@
-if not getrenv().script_key or getrenv().script_key ~= "galllaxy" then
+--[[if not getrenv().script_key or getrenv().script_keys ~= "galllaxy" then
     warn("🔒 Invalid or missing script key! Access denied.")
     return -- Stop execution if key is wrong
-end
+end]]--
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
@@ -26,10 +26,22 @@ local Window = Rayfield:CreateWindow({
 	Invite = "https://discord.gg/vSf9hSJG", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
 	RememberJoins = true -- Set this to false to make them join the discord every time they load it up
 	},
+	
+	KeySystem = true, -- Set this to true to use our key system
+    KeySettings = {
+      Title = "GalllaxyHub",
+      Subtitle = "Key System",
+      Note = "Go to discord to obtain your key", -- Use this to tell the user how to get a key
+      FileName = "KeyGalllaxy", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = false, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Galllaxy", "Dev", "dev", "test"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
 })
 
-local PlayerTab = Window:CreateTab("Player", "sigma") -- Title, Image
-local Section = PlayerTab:CreateSection("Section Example")
+local PlayerTab = Window:CreateTab("Player", "sigma") -- Players TAB
+local ESPTab = Window:CreateTab("ESP", "eye") -- ESP TAB
+local Section = PlayerTab:CreateSection("Basic Settings")
 Section:Set("Valuable Settings")
 local ToggleWalkspeed = PlayerTab:CreateToggle({
 	Name = "Toggle Walkspeed",
@@ -82,6 +94,15 @@ local Button = PlayerTab:CreateButton({
 		Rayfield:Destroy()
 	end,
 })
+
+local ESPToggle = ESPTab:CreateToggle({
+	Name = "ESP Toggle",
+	CurrentValue = false,
+	Flag = "EspToggle",
+	Callback = function()
+		--ESP Func
+	end
+})
 local KeybindTab = Window:CreateTab("Keybinds", "command")
 local Keybind1 = KeybindTab:CreateKeybind({
 	Name = "Walkspeed",
@@ -108,7 +129,7 @@ local function ChangeWalkspeed(Value)
 	local char = player.Character
 	local humanoid = char.WaitForChild("Humanoid")
 	humanoid.Walkspeed = Value]]--
-	if ToggleWalkspeed.CurrentValue == True then
+	if ToggleWalkspeed.CurrentValue == true then
 		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = Value
 	else
 		game.Player.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = 16
@@ -120,7 +141,7 @@ local function ChangeJumppower(Value)
 	local char = player.Character
 	local humanoid = char.WaitForChild("Humanoid")
 	humanoid.JumpPower = Value]]--
-	if ToggleJumppower.CurrentValue == True then
+	if ToggleJumppower.CurrentValue == true then
 		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = Value
 	else
 		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = 50
