@@ -48,8 +48,9 @@ local ToggleWalkspeed = PlayerTab:CreateToggle({
 	CurrentValue = false,
 	Flag = "WalkSpeed", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
-	-- The function that takes place when the toggle is pressed
-	-- The variable (Value) is a boolean on whether the toggle is true or false
+		if not Value then
+			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+		end
 	end,
 })
 local Slider = PlayerTab:CreateSlider({
@@ -70,7 +71,8 @@ local ToggleJumppower = PlayerTab:CreateToggle({
 	CurrentValue = false,
 	Flag = "JumpPower", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
-
+		if not Value then
+			game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
 	-- The function that takes place when the toggle is pressed
 	-- The variable (Value) is a boolean on whether the toggle is true or false
 	end,
@@ -124,16 +126,22 @@ Rayfield:Notify({
 
 Rayfield:LoadConfiguration()
 
-local function ChangeWalkspeed(Value)
-	--[[local player = game.Players.LocalPlayer
+--[[local function ChangeWalkspeed(Value)
+	local player = game.Players.LocalPlayer
 	local char = player.Character
 	local humanoid = char.WaitForChild("Humanoid")
-	humanoid.Walkspeed = Value]]--
+	humanoid.Walkspeed = Value
 	if ToggleWalkspeed.CurrentValue == true then
 		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = Value
 	else
-		game.Player.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = 16
+		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = 16
 	end
+end]]--
+local function ChangeWalkspeed(Value)
+    local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+    if humanoid and ToggleWalkspeed.CurrentValue then
+        humanoid.WalkSpeed = Value
+    end
 end
 
 local function ChangeJumppower(Value)
@@ -145,4 +153,5 @@ local function ChangeJumppower(Value)
 		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = Value
 	else
 		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = 50
+	end
 end
