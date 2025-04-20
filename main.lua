@@ -48,15 +48,17 @@ local ToggleWalkspeed = PlayerTab:CreateToggle({
 	CurrentValue = false,
 	Flag = "WalkSpeed", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
-		if not Value then
-			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-		end
+		if Value then
+            ChangeWalkspeed(_G.WalkSpeedSlider.CurrentValue) -- Берём значение даже если слайдер не трогали
+        else
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+        end
 	end,
 })
 local SliderWalk = PlayerTab:CreateSlider({
 	Name = "Walkspeed",
 	Range = {0, 500},
-	Increment = 1,
+	Increment = 10,
 	Suffix = "WalkspeedSL",
 	CurrentValue = 16,
 	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -64,20 +66,25 @@ local SliderWalk = PlayerTab:CreateSlider({
 		ChangeWalkspeed(Value)
 	end,
 })
+
+_G.WalkSpeedSlider = SliderWalk -- Добавь эту строку после создания слайдера
+
 local ToggleJumppower = PlayerTab:CreateToggle({
 	Name = "Toggle JumpPower",
 	CurrentValue = false,
 	Flag = "JumpPower", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
-		if not Value then
-			game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+		if Value then
+			ChangeJumppower(_G.JumpPowerSlider.CurrentValue)
+		else
+			game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50	
 		end
 	end,
 })
 local SliderJump = PlayerTab:CreateSlider({
 	Name = "JumpPower",
 	Range = {0, 500},
-	Increment = 1,
+	Increment = 10,
 	Suffix = "Jump Power",
 	CurrentValue = 50,
 	Flag = "JumpPowerSL",
@@ -85,6 +92,8 @@ local SliderJump = PlayerTab:CreateSlider({
 		ChangeJumppower(Value)
 	end,
 })
+
+_G.JumpPowerSlider = SliderJump
 
 function ChangeWalkspeed(Value)
     local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
