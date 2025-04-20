@@ -57,7 +57,7 @@ local SliderWalk = PlayerTab:CreateSlider({
 	Name = "Walkspeed",
 	Range = {0, 500},
 	Increment = 1,
-	Suffix = "Walkspeed",
+	Suffix = "WalkspeedSL",
 	CurrentValue = 16,
 	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
@@ -80,7 +80,7 @@ local SliderJump = PlayerTab:CreateSlider({
 	Increment = 1,
 	Suffix = "Jump Power",
 	CurrentValue = 50,
-	Flag = "JumpPowerSlider",
+	Flag = "JumpPowerSL",
 	Callback = function(Value)
 		ChangeJumppower(Value)
 	end,
@@ -96,6 +96,7 @@ end
 function ChangeJumppower(Value)
     local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
     if humanoid and ToggleJumppower.CurrentValue then
+        humanoid.UseJumpPower = true
         humanoid.JumpPower = Value
     end
 end
