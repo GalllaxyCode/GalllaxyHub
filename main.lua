@@ -53,7 +53,7 @@ local ToggleWalkspeed = PlayerTab:CreateToggle({
 		end
 	end,
 })
-local Slider = PlayerTab:CreateSlider({
+local SliderWalk = PlayerTab:CreateSlider({
 	Name = "Walkspeed",
 	Range = {0, 500},
 	Increment = 1,
@@ -62,8 +62,6 @@ local Slider = PlayerTab:CreateSlider({
 	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Value)
 		ChangeWalkspeed(Value)
-	-- The function that takes place when the slider changes
-	-- The variable (Value) is a number which correlates to the value the slider is currently at
 	end,
 })
 local ToggleJumppower = PlayerTab:CreateToggle({
@@ -73,22 +71,35 @@ local ToggleJumppower = PlayerTab:CreateToggle({
 	Callback = function(Value)
 		if not Value then
 			game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
-	-- The function that takes place when the toggle is pressed
-	-- The variable (Value) is a boolean on whether the toggle is true or false
+		end
 	end,
 })
-local Slider = PlayerTab:CreateSlider({
+local SliderJump = PlayerTab:CreateSlider({
 	Name = "JumpPower",
 	Range = {0, 500},
 	Increment = 1,
-	Suffix = "JumpPowerslider"
-	CurrentValue = 15,
+	Suffix = "Jump Power",
+	CurrentValue = 50,
 	Flag = "JumpPowerSlider",
 	Callback = function(Value)
 		ChangeJumppower(Value)
-		-- Something
-	end
+	end,
 })
+
+function ChangeWalkspeed(Value)
+    local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+    if humanoid and ToggleWalkspeed.CurrentValue then
+        humanoid.WalkSpeed = Value
+    end
+end
+
+function ChangeJumppower(Value)
+    local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+    if humanoid and ToggleJumppower.CurrentValue then
+        humanoid.JumpPower = Value
+    end
+end
+
 local Button = PlayerTab:CreateButton({
 	Name = "Unload Script",
 	Callback = function()
@@ -112,8 +123,11 @@ local Keybind1 = KeybindTab:CreateKeybind({
 	HoldToInteract = false,
 	Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
 	Callback = function(Keybind)
-	-- The function that takes place when the keybind is pressed
-	-- The variable (Keybind) is a boolean for whether the keybind is being held or not (HoldToInteract needs to be true)
+	    if Keybind then
+	        ToggleWalkspeed.CurrentValue = true
+	    elseif not Keybind then
+	        ToggleWalkspeed.CurrentValue = false
+	    end
 	end,
 })
 
@@ -125,33 +139,3 @@ Rayfield:Notify({
 })
 
 Rayfield:LoadConfiguration()
-
---[[local function ChangeWalkspeed(Value)
-	local player = game.Players.LocalPlayer
-	local char = player.Character
-	local humanoid = char.WaitForChild("Humanoid")
-	humanoid.Walkspeed = Value
-	if ToggleWalkspeed.CurrentValue == true then
-		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = Value
-	else
-		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = 16
-	end
-end]]--
-local function ChangeWalkspeed(Value)
-    local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-    if humanoid and ToggleWalkspeed.CurrentValue then
-        humanoid.WalkSpeed = Value
-    end
-end
-
-local function ChangeJumppower(Value)
-	--[[local player = game.Players.LocalPlayer
-	local char = player.Character
-	local humanoid = char.WaitForChild("Humanoid")
-	humanoid.JumpPower = Value]]--
-	if ToggleJumppower.CurrentValue == true then
-		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = Value
-	else
-		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").JumpPower = 50
-	end
-end
