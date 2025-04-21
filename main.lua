@@ -1,8 +1,3 @@
---[[if not getrenv().script_key or getrenv().script_keys ~= "galllaxy" then
-    warn("🔒 Invalid or missing script key! Access denied.")
-    return -- Stop execution if key is wrong
-end]]--
-
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
@@ -11,7 +6,7 @@ local Window = Rayfield:CreateWindow({
 	LoadingTitle = "GalllaxyHub loads...",
 	LoadingSubtitle = "by Galllaxy",
 	Theme = "Serenity", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-
+	
 	DisableRayfieldPrompts = false,
 	DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
 
@@ -61,18 +56,18 @@ local SliderWalk = PlayerTab:CreateSlider({
 	Increment = 10,
 	Suffix = "WalkspeedSL",
 	CurrentValue = 16,
-	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Slider1",
 	Callback = function(Value)
 		ChangeWalkspeed(Value)
 	end,
 })
 
-_G.WalkSpeedSlider = SliderWalk -- Добавь эту строку после создания слайдера
+_G.WalkSpeedSlider = SliderWalk -- Глобавльная переменная
 
 local ToggleJumppower = PlayerTab:CreateToggle({
 	Name = "Toggle JumpPower",
 	CurrentValue = false,
-	Flag = "JumpPower", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "JumpPower", 
 	Callback = function(Value)
 		if Value then
 			ChangeJumppower(_G.JumpPowerSlider.CurrentValue)
@@ -110,10 +105,9 @@ function ChangeJumppower(Value)
     end
 end
 
-local Button = PlayerTab:CreateButton({
+local UnloadScriptButton = PlayerTab:CreateButton({
 	Name = "Unload Script",
 	Callback = function()
-	-- The function that takes place when the button is pressed
 		Rayfield:Destroy()
 	end,
 })
@@ -131,12 +125,12 @@ local Keybind1 = KeybindTab:CreateKeybind({
 	Name = "Walkspeed",
 	CurrentKeybind = "Q",
 	HoldToInteract = false,
-	Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Flag = "Keybind1",
 	Callback = function(Keybind)
 	    if Keybind then
-	        ToggleWalkspeed.CurrentValue = true
+	        _G.ToggleWalkspeed.CurrentValue = true
 	    elseif not Keybind then
-	        ToggleWalkspeed.CurrentValue = false
+	        _G.ToggleWalkspeed.CurrentValue = false
 	    end
 	end,
 })
@@ -149,3 +143,12 @@ Rayfield:Notify({
 })
 
 Rayfield:LoadConfiguration()
+
+--[[
+	TO BE DONE:  (BETA v0.1)
+	KeyBinds actually work
+	More Keybinds 
+	Look into ESP 
+	Actually tweak some Rayfield or use another gui
+	Follow the work on other products (Discord Bot)
+]]
