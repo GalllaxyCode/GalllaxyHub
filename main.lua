@@ -32,7 +32,9 @@ local Window = Rayfield:CreateWindow({
       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
       Key = {"Galllaxy", "Dev", "dev", "test"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
    }
-})
+}) 
+
+
 
 local PlayerTab = Window:CreateTab("Player", "sigma") -- Players TAB
 local ESPTab = Window:CreateTab("ESP", "eye") -- ESP TAB
