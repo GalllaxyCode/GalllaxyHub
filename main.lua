@@ -2,12 +2,12 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
 	Name = "GalllaxyHub",
-	Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+	Icon = "eclipse", -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
 	LoadingTitle = "GalllaxyHub loads...",
 	LoadingSubtitle = "by Galllaxy",
-	Theme = "Serenity", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+	Theme = "Dark Blue", -- Check https://docs.sirius.menu/rayfield/configuration/themes    --Serenity Bad, Bloom Bad, 
 	
-	DisableRayfieldPrompts = false,
+	DisableRayfieldPrompts = true,
 	DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
 
 	ConfigurationSaving = {
@@ -34,6 +34,95 @@ local Window = Rayfield:CreateWindow({
    }
 }) 
 
+
+Players = cloneref(game:GetService("Players"))
+local tweenInf = TweenInfo.new(1, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+tweenSpeed = 30
+TweenService = cloneref(game:GetService("TweenService"))
+
+
+function execCmd(cmdStr,speaker,store)
+	cmdStr = cmdStr:gsub("%s+$","")
+	task.spawn(function()
+		local rawCmdStr = cmdStr
+		cmdStr = string.gsub(cmdStr,"\\\\","%%BackSlash%%")
+		local commandsToRun = splitString(cmdStr,"\\")
+		for i,v in pairs(commandsToRun) do
+			v = string.gsub(v,"%%BackSlash%%","\\")
+			local x,y,num = v:find("^(%d+)%^")
+			local cmdDelay = 0
+			local infTimes = false
+			if num then
+				v = v:sub(y+1)
+				local x,y,del = v:find("^([%d%.]+)%^")
+				if del then
+					v = v:sub(y+1)
+					cmdDelay = tonumber(del) or 0
+				end
+			else
+				local x,y = v:find("^inf%^")
+				if x then
+					infTimes = true
+					v = v:sub(y+1)
+					local x,y,del = v:find("^([%d%.]+)%^")
+					if del then
+						v = v:sub(y+1)
+						del = tonumber(del) or 1
+						cmdDelay = (del > 0 and del or 1)
+					else
+						cmdDelay = 1
+					end
+				end
+			end
+			num = tonumber(num or 1)
+
+			if v:sub(1,1) == "!" then
+				local chunks = splitString(v:sub(2),split)
+				if chunks[1] and lastCmds[chunks[1]] then v = lastCmds[chunks[1]] end
+			end
+
+			local args = splitString(v,split)
+			local cmdName = args[1]
+			local cmd = findCmd(cmdName)
+			if cmd then
+				table.remove(args,1)
+				cargs = args
+				if not speaker then speaker = Players.LocalPlayer end
+				if store then
+					if speaker == Players.LocalPlayer then
+						if cmdHistory[1] ~= rawCmdStr and rawCmdStr:sub(1,11) ~= 'lastcommand' and rawCmdStr:sub(1,7) ~= 'lastcmd' then
+							table.insert(cmdHistory,1,rawCmdStr)
+						end
+					end
+					if #cmdHistory > 30 then table.remove(cmdHistory) end
+
+					lastCmds[cmdName] = v
+				end
+				local cmdStartTime = tick()
+				if infTimes then
+					while lastBreakTime < cmdStartTime do
+						local success,err = pcall(cmd.FUNC,args, speaker)
+						if not success and _G.IY_DEBUG then
+							warn("Command Error:", cmdName, err)
+						end
+						wait(cmdDelay)
+					end
+				else
+					for rep = 1,num do
+						if lastBreakTime > cmdStartTime then break end
+						local success,err = pcall(function()
+							cmd.FUNC(args, speaker)
+						end)
+						if not success and _G.IY_DEBUG then
+							warn("Command Error:", cmdName, err)
+						end
+						if cmdDelay ~= 0 then wait(cmdDelay) end
+					end
+				end
+			end
+		end
+	end)
+end	
 
 
 local PlayerTab = Window:CreateTab("Player", "sigma") -- Players TAB
@@ -92,6 +181,20 @@ local SliderJump = PlayerTab:CreateSlider({
 
 _G.JumpPowerSlider = SliderJump
 
+local FovSlider = PlayerTab:CreateSlider({
+	Name = "FOV",
+	Range = {70, 120},
+	Increment = 1,
+	Suffix = "FOV",
+	CurrentValue = 70,
+	Flag = "FovSlider",
+	Callback = function(Value)
+		local camera = game.Workspace.CurrentCamera
+		camera.FieldOfView = Value
+	end,
+})
+
+
 --[[function ChangeWalkspeed(Value)
     local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
     if humanoid and ToggleWalkspeed.CurrentValue then
@@ -122,6 +225,65 @@ local ESPToggle = ESPTab:CreateToggle({
 		--ESP Func
 	end
 })
+
+local X = 1
+local Y = 2
+local Z = 3
+local tpargs = {
+	[X] = -561,
+	[Y] = 5,
+	[Z] = -3489,
+}
+
+local FarmTab = Window:CreateTab("Farm", "chevrons-up")
+local FarmSection = FarmTab:CreateSection("Farm Settings")
+local TpButton = FarmTab:CreateButton({
+	Name = "Teleport to Farm Place",
+	Callback = function()
+		TpToFarm(tpargs, game.Players.LocalPlayer)
+	end,
+})
+
+local TpInput = FarmTab:CreateInput({
+	Name = "Tween Position",
+	CurrentValue = "-561, 5, -3489",
+	PlaceholderText = "X Y Z",
+	RemoveTextAfterFocusLost = false,
+	Flag = "TpInput",
+	Callback = function(Text)
+		local pos = string.split(Text, ",")
+		if #pos == 3 then
+			tpargs[X] = tonumber(pos[1])
+			tpargs[Y] = tonumber(pos[2])
+			tpargs[Z] = tonumber(pos[3])
+		end
+	end,
+ })
+
+local TpSpeedInput = FarmTab:CreateInput({
+	Name = "Tween Speed",
+	CurrentValue = "5",
+	PlaceholderText = "Tween Speed",
+	RemoveTextAfterFocusLost = false,
+	Flag = "TpSpeedInput",
+	Callback = function(Text)
+		local speed = tonumber(Text)
+		if speed then
+			tweenSpeed = speed
+		end
+	end,
+ })
+
+function TpToFarm(args, speaker)
+	if #args < 3 then return end
+	local tpX,tpY,tpZ = tonumber((tostring(args[X]):gsub(",", ""))),tonumber((tostring(args[Y]):gsub(",", ""))),tonumber((tostring(args[Z]):gsub(",", "")))
+	local char = speaker.Character
+	if char and getRoot(char) then
+		TweenService:Create(getRoot(speaker.Character), TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tpX,tpY,tpZ)}):Play()
+	end
+end
+
+
 local KeybindTab = Window:CreateTab("Keybinds", "command")
 local Keybind1 = KeybindTab:CreateKeybind({
 	Name = "Walkspeed",
@@ -137,19 +299,32 @@ local Keybind1 = KeybindTab:CreateKeybind({
 	end,
 })
 
+
 local DevTab = Window:CreateTab("DevTools", "app-window-mac")
 local CopyPositionBtn = DevTab:CreateButton({
 	Name = "Copy Position",
 	Callback = function()
-		CopyPosition()
+		CopyPosition("me", game.Players.LocalPlayer)
+	end,
+})
+
+local CurrentXYZButton = DevTab:CreateButton({
+	Name = "Print Current XYZ",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Current Position",
+			Content = "X: " .. math.round(tpargs[X]) .. ", Y: " .. math.round(tpargs[Y]) .. ", Z: " .. math.round(tpargs[Z]),
+			Duration = 5,
+			Image = "box",
+		})
 	end,
 })
 
 function CopyPosition(args, speaker)
-	--local players = getPlayer(args[1], speaker)
-	--for i,v in pairs(players)do
-		--local char = Players[v].Character
-		local char = game.Players.LocalPlayer.Character
+	local players = getPlayer(args[1], speaker)
+	for i,v in pairs(players) do
+		local char = Players[v].Character
+		--local char = game.Players.LocalPlayer.Character
 		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
 		pos = pos and pos.Position
 		if not pos then
@@ -164,8 +339,9 @@ function CopyPosition(args, speaker)
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
 		toClipboard(roundedPos)       
 	end
+end
 
-function getPlayer(list,speaker)
+function getPlayer(list, speaker)
 	if list == nil then return {speaker.Name} end
 	local nameList = splitString(list,",")
 
@@ -295,11 +471,15 @@ Rayfield:LoadConfiguration()
 	LOCATIONS:
 	356, 18, -4465 -- marine next to spawn (456, 57, -4512 -- roof)
 
+	-561, 5, -3489 -- starter island
+
+	-1547, 4, -3350 -- sandora 
+
 
 	USEFUL METHODS:
 	tweengoto 
 	staffwatch
-	copyposition -- DONE
+	copyposition -- DONE & FIXED
 	walltp
 	esp 
 	fov
@@ -321,58 +501,6 @@ Rayfield:LoadConfiguration()
 		local objectSpaceVelocity = CFrame.new(cameraPosition, Vector3.new(headPosition.X, cameraPosition.Y, headPosition.Z)):VectorToObjectSpace(moveDirection)
 		Head.CFrame = CFrame.new(headPosition) * (cameraCFrame - cameraPosition) * CFrame.new(objectSpaceVelocity)
 	end)
-
-
-	function getPlayer(list,speaker)
-	if list == nil then return {speaker.Name} end
-	local nameList = splitString(list,",")
-
-	local foundList = {}
-
-	for _,name in pairs(nameList) do
-		if string.sub(name,1,1) ~= "+" and string.sub(name,1,1) ~= "-" then name = "+"..name end
-		local tokens = toTokens(name)
-		local initialPlayers = Players:GetPlayers()
-
-		for i,v in pairs(tokens) do
-			if v.Operator == "+" then
-				local tokenContent = v.Name
-				local foundCase = false
-				for regex,case in pairs(SpecialPlayerCases) do
-					local matches = {string.match(tokenContent,"^"..regex.."$")}
-					if #matches > 0 then
-						foundCase = true
-						initialPlayers = onlyIncludeInTable(initialPlayers,case(speaker,matches,initialPlayers))
-					end
-				end
-				if not foundCase then
-					initialPlayers = onlyIncludeInTable(initialPlayers,getPlayersByName(tokenContent))
-				end
-			else
-				local tokenContent = v.Name
-				local foundCase = false
-				for regex,case in pairs(SpecialPlayerCases) do
-					local matches = {string.match(tokenContent,"^"..regex.."$")}
-					if #matches > 0 then
-						foundCase = true
-						initialPlayers = removeTableMatches(initialPlayers,case(speaker,matches,initialPlayers))
-					end
-				end
-				if not foundCase then
-					initialPlayers = removeTableMatches(initialPlayers,getPlayersByName(tokenContent))
-				end
-			end
-		end
-
-		for i,v in pairs(initialPlayers) do table.insert(foundList,v) end
-	end
-
-	local foundNames = {}
-	for i,v in pairs(foundList) do table.insert(foundNames,v.Name) end
-
-	return foundNames
-	end
-
 
 
 ]]--
