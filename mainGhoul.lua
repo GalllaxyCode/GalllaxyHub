@@ -40,8 +40,8 @@ local tweenInf = TweenInfo.new(1, Enum.EasingStyle.Quart, Enum.EasingDirection.O
 TweenService = cloneref(game:GetService("TweenService"))
 RunService = cloneref(game:GetService("RunService"))
 ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
---CmdrClient = require(ReplicatedStorage:WaitForChild("CmdrClient"))
---CmdrLocal = require(Players.LocalPlayer:WaitForChild("CmdrSetup"))
+CmdrClient = require(ReplicatedStorage:WaitForChild("CmdrClient"))
+CmdrLocal = require(Players.LocalPlayer:WaitForChild("CmdrSetup"))
 
 
 function execCmd(cmdStr,speaker,store)
